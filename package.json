@@ -23,5 +23,13 @@
   "bugs": {
     "url": "https://github.com/wzrdtales/crdb-pg/issues"
   },
-  "homepage": "https://github.com/wzrdtales/crdb-pg#readme"
+  "homepage": "https://github.com/wzrdtales/crdb-pg#readme",
+  "peerDependencies": {
+    "pg": "^7.4.0",
+    "pg-native": "^2.2.0"
+  },
+  "dependencies": {
+    "pg": "^7.4.0",
+    "pg-native": "^2.2.0"
+  }
 }
