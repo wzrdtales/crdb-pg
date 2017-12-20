@@ -1,0 +1,27 @@
+{
+  "name": "crdb-pg",
+  "version": "1.0.0",
+  "description": "A cockroachdb driver to add the missing bits around the pq driver.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wzrdtales/crdb-pg.git"
+  },
+  "keywords": [
+    "cockroachdb",
+    "crdb",
+    "cockroach",
+    "pq",
+    "libpq",
+    "driver"
+  ],
+  "author": "Tobias Gurtzick <magic@wizardtales.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wzrdtales/crdb-pg/issues"
+  },
+  "homepage": "https://github.com/wzrdtales/crdb-pg#readme"
+}
