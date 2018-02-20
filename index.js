@@ -5,26 +5,32 @@ const SQL = require('sql-template-strings');
 
 async function retry (callQueries) {
   const client = await this.connect();
-  await client.query(SQL`BEGIN; SAVEPOINT cockroach_restart`);
   async function handleError (err) {
     if (err.code === '40001') {
       await client.query(SQL`ROLLBACK TO SAVEPOINT cockroach_restart`);
       return exec();
     }
 
+    await client.query(SQL`ROLLBACK`);
     throw err;
   }
   async function exec () {
-    try {
-      const result = await callQueries(client);
-      await client.query(SQL`RELEASE SAVEPOINT cockroach_restart`);
-      return result;
-    } catch (err) {
-      return handleError(err);
-    }
+    const result = await callQueries(client);
+    await client.query(SQL`RELEASE SAVEPOINT cockroach_restart`);
+    await client.query(SQL`COMMIT`);
+    return result;
   }
 
-  return exec();
+  try {
+    await client.query(SQL`BEGIN; SAVEPOINT cockroach_restart`);
+    const res = await exec();
+    client.release();
+    return res;
+  } catch (err) {
+    const res = await handleError(err);
+    client.release();
+    return res;
+  }
 }
 
 module.exports = class CRDB {
