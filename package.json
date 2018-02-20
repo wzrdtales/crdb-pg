@@ -1,6 +1,6 @@
 {
   "name": "crdb-pg",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A cockroachdb driver to add the missing bits around the pq driver.",
   "main": "index.js",
   "scripts": {
