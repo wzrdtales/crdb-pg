@@ -78,3 +78,5 @@ module.exports = class CRDB {
     }
   }
 };
+
+module.exports = CRDB;
