@@ -3,7 +3,7 @@
 let pg = require('pg');
 const SQL = require('sql-template-strings');
 
-async function retry (pool, callQueries) {
+async function retry (callQueries) {
   const client = await this.connect();
   await client.query(SQL`BEGIN; SAVEPOINT cockroach_restart`);
   async function handleError (err) {
