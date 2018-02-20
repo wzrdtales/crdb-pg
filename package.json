@@ -27,5 +27,8 @@
   "peerDependencies": {
     "pg": "^7.4.0",
     "pg-native": "^2.2.0"
+  },
+  "dependencies": {
+    "sql-template-strings": "^2.2.2"
   }
 }
