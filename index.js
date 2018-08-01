@@ -22,7 +22,7 @@ async function retry (callQueries) {
   }
 
   try {
-    await client.query(SQL`BEGIN; SAVEPOINT cockroach_restart`);
+    await client.query('BEGIN; SAVEPOINT cockroach_restart');
     const res = await exec();
     client.release();
     return res;
