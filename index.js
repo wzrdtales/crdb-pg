@@ -3,9 +3,10 @@
 let pg = require('pg');
 const SQL = require('sql-template-strings');
 
-async function retry (callQueries) {
+async function retry(callQueries) {
   const client = await this.connect();
-  async function handleError (err) {
+  async function handleError(err) {
+    console.log('run into handleError', err);
     if (err.code === '40001') {
       await client.query(SQL`ROLLBACK TO SAVEPOINT cockroach_restart`);
       return exec();
@@ -14,7 +15,7 @@ async function retry (callQueries) {
     await client.query(SQL`ROLLBACK`);
     throw err;
   }
-  async function exec () {
+  async function exec() {
     const result = await callQueries(client);
     await client.query(SQL`RELEASE SAVEPOINT cockroach_restart`);
     await client.query(SQL`COMMIT`);
@@ -34,7 +35,7 @@ async function retry (callQueries) {
 }
 
 module.exports = class CRDB {
-  constructor (config) {
+  constructor(config) {
     this._config = { ...config };
 
     if (this._config.native) {
@@ -42,7 +43,7 @@ module.exports = class CRDB {
     }
   }
 
-  connect () {
+  connect() {
     this._discover();
     let connection = new pg.Client(this._config);
     connection.connect();
@@ -50,7 +51,7 @@ module.exports = class CRDB {
     return connection;
   }
 
-  pool () {
+  pool() {
     this._discover();
     let pool = new pg.Pool(this._config);
     pool.retry = retry; // patch in retry
@@ -58,7 +59,7 @@ module.exports = class CRDB {
     return pool;
   }
 
-  _discover () {
+  _discover() {
     if (this._config.discovery) {
     }
   }
