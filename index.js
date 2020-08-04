@@ -5,13 +5,16 @@ const SQL = require('sql-template-strings');
 
 async function retry(callQueries) {
   const client = await this.connect();
+  let running = true;
   async function handleError(err) {
-    console.log('run into handleError', err);
+    console.log('run into handleError', err, err.code, err.message);
     if (err.code === '40001') {
+      console.log('i am trying, hard');
       await client.query(SQL`ROLLBACK TO SAVEPOINT cockroach_restart`);
-      return exec();
+      return true;
     }
 
+    running = false;
     await client.query(SQL`ROLLBACK`);
     throw err;
   }
@@ -22,15 +25,15 @@ async function retry(callQueries) {
     return result;
   }
 
-  try {
-    await client.query('BEGIN; SAVEPOINT cockroach_restart');
-    const res = await exec();
-    client.release();
-    return res;
-  } catch (err) {
-    const res = await handleError(err);
-    client.release();
-    return res;
+  await client.query('BEGIN; SAVEPOINT cockroach_restart');
+  while (running) {
+    try {
+      const res = await exec();
+      client.release();
+      return res;
+    } catch (err) {
+      await handleError(err);
+    }
   }
 }
 
