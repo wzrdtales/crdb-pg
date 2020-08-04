@@ -7,9 +7,7 @@ async function retry(callQueries) {
   const client = await this.connect();
   let running = true;
   async function handleError(err) {
-    console.log('run into handleError', err, err.code, err.message);
     if (err.code === '40001') {
-      console.log('i am trying, hard');
       await client.query(SQL`ROLLBACK TO SAVEPOINT cockroach_restart`);
       return true;
     }
