@@ -3,11 +3,12 @@
 let pg = require('pg');
 const SQL = require('sql-template-strings');
 
-async function retry(callQueries) {
+async function retry(callQueries, limit = 11) {
   const client = await this.connect();
+  let counter = 0;
   let running = true;
   async function handleError(err) {
-    if (err.code === '40001') {
+    if (err.code === '40001' && counter < limit) {
       await client.query(SQL`ROLLBACK TO SAVEPOINT cockroach_restart`);
       return true;
     }
@@ -26,6 +27,7 @@ async function retry(callQueries) {
   await client.query('BEGIN; SAVEPOINT cockroach_restart');
   while (running) {
     try {
+      ++counter;
       const res = await exec();
       client.release();
       return res;
