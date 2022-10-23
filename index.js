@@ -25,8 +25,8 @@ async function retry(callQueries, limit = 11) {
 
   async function exec() {
     const result = await callQueries(client, { abort });
-    await client.query(SQL`RELEASE SAVEPOINT cockroach_restart`);
     if (running) {
+      await client.query(SQL`RELEASE SAVEPOINT cockroach_restart`);
       await client.query(SQL`COMMIT`);
     }
     return result;
