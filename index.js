@@ -17,10 +17,18 @@ async function retry(callQueries, limit = 11) {
     await client.query(SQL`ROLLBACK`);
     throw err;
   }
+
+  async function abort() {
+    running = false;
+    return client.query(SQL`ROLLBACK`);
+  }
+
   async function exec() {
-    const result = await callQueries(client);
+    const result = await callQueries(client, { abort });
     await client.query(SQL`RELEASE SAVEPOINT cockroach_restart`);
-    await client.query(SQL`COMMIT`);
+    if (running) {
+      await client.query(SQL`COMMIT`);
+    }
     return result;
   }
 
