@@ -48,7 +48,7 @@ async function retry (callQueries, limit = 11) {
 
 module.exports = class CRDB {
   constructor (config) {
-    this._config = { ...config };
+    this._config = JSON.parse(JSON.stringify(config));
 
     if (this._config.native) {
       pg = pg.native;
