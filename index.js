@@ -38,10 +38,11 @@ async function retry (callQueries, limit = 11) {
     try {
       ++counter;
       const res = await exec();
-      client.release();
       return res;
     } catch (err) {
       await handleError(err);
+    } finally {
+      client.release();
     }
   }
 }
