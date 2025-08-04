@@ -29,6 +29,7 @@ async function retry (callQueries, limit = 11) {
     if (running) {
       await client.query(SQL`RELEASE SAVEPOINT cockroach_restart`);
       await client.query(SQL`COMMIT`);
+      running = false;
     }
     return result;
   }
@@ -42,7 +43,9 @@ async function retry (callQueries, limit = 11) {
     } catch (err) {
       await handleError(err);
     } finally {
-      client.release();
+      if(!running) {
+        client.release();
+      }
     }
   }
 }
